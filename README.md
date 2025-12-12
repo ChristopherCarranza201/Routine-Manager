@@ -21,30 +21,6 @@ webhook conectado al **WhatsApp Cloud API (Meta)**.
 
 ---
 
-## 🧩 Módulo Previo: Autenticación con Supabase y Detección de Anomalías con OpenAI
-
-Este módulo fue parte de la primera fase del proyecto. Incluía:
-
-### 1. 🔑 Autenticación Segura
-Flujos completos de registro, inicio de sesión y recuperación de contraseña.
-
-### 2. 🕵️‍♂️ Detección de Anomalías
-El agente analiza cada inicio de sesión considerando:
-- Historial del usuario
-- Ubicación
-- Comportamientos inusuales (ej. accesos desde ubicaciones desconocidas)
-
-### 3. 🔄 Restablecimiento de Contraseña
-Flujo seguro mediante **correo electrónico transaccional**.
-
-**Aunque este módulo permanece dentro del repositorio, actualmente no
-forma parte del alcance principal del Routine Manager**, ya que el foco
-está en el gestor de tareas y sistema de notificaciones.
-
-![Preview](./img/FastAPI-01.png)
-
-------------------------------------------------------------------------
-
 
 ## 🗄️ Relación con Supabase
 
@@ -62,13 +38,32 @@ está en el gestor de tareas y sistema de notificaciones.
 Crea un archivo `.env` en `fastapi-auth-backend/`:
 
 ```env
-# Credenciales de Supabase
-SUPABASE_URL="[tu_url_de_supabase]"
-SUPABASE_KEY="[tu_clave_de_supabase]"
-SUPABASE_SERVICE_ROLE_KEY="[tu_clave_de_rol_de_servicio_de_supabase]"
+# Credenciales SupabaseSupabase
+SUPABASE_URL= "[tu_url_de_supabase]"
+SUPABASE_ANON_KEY= "[tu_anonkey_de_supabase]"
+SUPABASE_SERVICE_ROLE_KEY= "[tu_clave_de_rol_de_servicio_de_supabase]"
+SUPABASE_KEY= "[tu_clave_de_supabase]"
 
-# Clave de OpenAI para el agente de anomalías
-OPENAI_API_KEY="[tu_clave_de_api_de_openai]"
+# Authenticated Tests Endpoints
+SUPABASE_JWT_SECRET= "[tu_JWT_de_supabase]"
+SUPABASE= authenticated
+ALLOW_DEV_HEADER= 1
+
+OPENAI_API_KEY= "[tu_clave_de_api_de_openai]"
+
+# WhatsApp Cloud API (Meta)
+META_WA_TOKEN= # Permanent Access Token (Graph API)          
+META_WA_PHONE_ID= # phone_number_id
+META_WA_BUSINESS_ID=  # opcional, útil para diagnósticos
+META_WA_VERIFY_TOKEN= # cadena para verificar el webhook
+
+# Dispatcher tunables
+DISPATCHER_POLL_SECONDS=30
+DISPATCHER_BATCH_SIZE=20
+DISPATCHER_MAX_ATTEMPTS=5
+
+# /health/dispatcher"
+ADMIN_TOKEN=
 ```
 
 ---
@@ -136,6 +131,7 @@ uvicorn main:app --reload
 
 ---
 # Routine Manager – Backend Overview
+![Preview](./img/FastAPI-01.png)
 
 ## 🔐 Auth & Security
 
