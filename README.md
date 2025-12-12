@@ -63,7 +63,7 @@ DISPATCHER_BATCH_SIZE=20
 DISPATCHER_MAX_ATTEMPTS=5
 
 # /health/dispatcher"
-ADMIN_TOKEN=
+ADMIN_TOKEN= uno
 ```
 
 ---
