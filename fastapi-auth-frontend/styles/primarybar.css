@@ -1,0 +1,341 @@
+:root {
+    --pb-rail: 64px;
+    --pb-wide: 260px;
+}
+
+/* ===== Rail (primary) ===== */
+.pb-rail {
+    pointer-events: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--pb-rail);
+    background: #fff;
+    /* tu dark rail */
+    color: var(--sidebar-foreground, #e5e7eb);
+    border-right: 1px solid #dfdfdf;
+    z-index: 30;
+    transition: width 220ms ease;
+}
+
+/* rail content */
+.pb-rail-inner {
+    height: 100%;
+    padding: 8px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.pb-brand {
+    display: flex;
+    justify-content: center;
+    margin: 4px 0 10px;
+}
+
+.pb-brand-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #000;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgb(60, 53, 53);
+}
+
+.pb-rail-group {
+    display: grid;
+    gap: 14px;
+    padding: 0 10px;
+}
+
+.pb-rail-item {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    background: #fff;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgb(60, 53, 53);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.pb-rail-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, .12);
+}
+
+.pb-rail-icon {
+    width: 18px;
+    height: 18px;
+    color: #344255;
+}
+
+.pb-rail-spacer {
+    flex: 1 1 auto;
+}
+
+/* Ocultar labels en rail si internamente los tuviera */
+html:not([data-secondary-pinned="true"]) .pb-rail .item-label {
+    opacity: 0;
+    width: 0;
+    transform: translateX(-4px);
+    pointer-events: none;
+    white-space: nowrap;
+    transition: opacity 160ms ease, transform 160ms ease, width 160ms ease;
+}
+
+/* ===== Overlay (secondary) =====
+   Debe iniciar exactamente en el borde derecho del primary bar */
+.pb-overlay {
+    position: fixed;
+    left: var(--pb-rail) !important;
+    /* forzamos el offset del rail */
+    top: 0;
+    bottom: 0;
+    width: var(--pb-wide);
+    transform: translateX(calc(-100% - 1px));
+    /* cerrado por defecto */
+    transition: transform 220ms ease;
+    z-index: 20;
+    /* debajo del rail (z=30) y del Topbar (z>=50) */
+    pointer-events: none;
+}
+
+/* Usar ~ por si existe cualquier nodo entre rail y overlay */
+.pb-rail:hover~.pb-overlay,
+.pb-overlay:focus-within {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+}
+
+/* 🚩 Cuando está PINNED el secondary bar, permanece abierto */
+html[data-secondary-pinned="true"] .pb-overlay {
+    transform: translateX(0) !important;
+    pointer-events: auto !important;
+}
+
+.pb-overlay-inner {
+    height: 100%;
+    background: #fff;
+    border-right: 1px solid var(--border, #e5e7eb);
+    transition: box-shadow 160ms ease, background-color 160ms ease;
+}
+
+/* Suaviza el panel en hover (mismo feel que el calendar sidebar) */
+.pb-rail:hover~.pb-overlay .pb-overlay-inner {
+    box-shadow: 0 12px 30px rgba(17, 24, 39, .14);
+}
+
+/* ===== Contenido: padding dinámico ===== */
+/* Base: solo rail (64px) */
+.pb-content {
+    padding-left: var(--pb-rail);
+    transition: padding-left 220ms ease;
+}
+
+/* Mientras está abierto por hover/focus → empuja visualmente (rail + panel) */
+html:has(.pb-rail:hover) .pb-content,
+html:has(.pb-overlay:focus-within) .pb-content {
+    padding-left: calc(var(--pb-rail) + var(--pb-wide));
+}
+
+/* Cuando está PINNED → empuje fijo (rail + panel) */
+html[data-secondary-pinned="true"] .pb-content {
+    padding-left: calc(var(--pb-rail) + var(--pb-wide));
+}
+
+/* ===== Handle (solo cuando está PINNED) ===== */
+.pb-handle {
+    position: fixed;
+    left: calc(var(--pb-rail) + var(--pb-wide));
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 1px solid var(--border, #e5e7eb);
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(17, 24, 39, .12);
+    cursor: pointer;
+    z-index: 41;
+}
+
+html:not([data-secondary-pinned="true"]) .pb-handle {
+    display: none;
+}
+
+/* ===== Secondary panel styling (como tu diseño) ===== */
+.SidebarSecondaryPanel {
+    padding: 12px 10px;
+}
+
+.ss-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.ss-team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: inherit;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(17, 24, 39, .04);
+}
+
+.ss-team:hover {
+    box-shadow: 0 2px 8px rgba(17, 24, 39, .06);
+}
+
+.ss-team-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #ff7a00;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.ss-team-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.05;
+}
+
+.ss-team-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ss-team-sub {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.ss-team-caret {
+    width: 16px;
+    height: 16px;
+    margin-left: auto;
+    color: #6b7280;
+}
+
+.ss-pin {
+    width: 28px;
+    height: 28px;
+    border-radius: 9999px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(17, 24, 39, .08);
+    cursor: pointer;
+}
+
+.ss-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ss-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ss-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    margin-top: 4px;
+}
+
+.ss-section-title {
+    font-size: 11px;
+    letter-spacing: .08em;
+    color: #9aa0a6;
+    font-weight: 700;
+}
+
+.ss-more {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9aa0a6;
+}
+
+.ss-more:hover {
+    border-color: #e5e7eb;
+    background: #fafafa;
+}
+
+.ss-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.ss-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px;
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    will-change: transform, box-shadow;
+}
+
+.ss-item:hover {
+    transform: translateY(-1px);
+    /* levanta 1px */
+    background: #f8fafc;
+    box-shadow: 0 1px 4px rgba(17, 24, 39, .06);
+}
+
+.ss-item-icon {
+    width: 18px;
+    height: 18px;
+    color: #6b7280;
+}
+
+.ss-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 12px 4px 6px;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .pb-rail,
+    .pb-overlay,
+    .pb-content {
+        transition: none !important;
+    }
+}

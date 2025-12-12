@@ -1,0 +1,41 @@
+.widget {
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--level3-bg, #F5F6F8);
+
+    /* Alto = viewport elegido - offset del topbar */
+    height: calc(var(--widget-target-height, 100vh) - var(--widget-offset, 112px));
+
+    /* aislar scroll */
+    overscroll-behavior: contain;
+    contain: layout paint size style;
+
+    /* margen interior del lado izquierdo si lo quieres */
+    padding-left: 22px;
+    padding-right: 9px;
+}
+
+.body {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+}
+
+/* Forzar que el calendario ocupe 100% del alto interno */
+.body :global(.calendar-container),
+.body :global(.rbc-calendar),
+.body :global(.rbc-time-view) {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+.body :global(.rbc-time-content),
+.body :global(.rbc-time-header) {
+    min-width: 0 !important;
+}

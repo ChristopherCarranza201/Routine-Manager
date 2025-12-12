@@ -1,0 +1,19 @@
+name: AuthAPI
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.18
+  - fastapi=0.116.1
+  - pydantic=2.11.7
+  - python-dotenv=1.1.1
+  - uvicorn=0.35.0
+  - pip
+  - pip:
+    - openai==1.107.1
+    - supabase==2.18.1
+    - uvicorn[standard]
+    - pydantic[email]
+
+    # CREATE ENV
+    # $ conda env create -f environment.yml

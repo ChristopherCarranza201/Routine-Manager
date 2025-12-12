@@ -1,0 +1,44 @@
+name: routine-manager
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  # Base FastAPI
+  - fastapi
+  - httpx
+  - requests
+  - python-dotenv
+  - pydantic>=2
+  - typing_extensions
+  - websockets
+  - jinja2
+  # Opcional útil (coloreo logs/CLI)
+  - rich
+
+  - pip:
+      - uvicorn[standard]
+      # OpenAI y ecosistema Supabase (según tu reqs)
+      - openai==1.107.3
+      - supabase==2.18.1
+      - storage3==0.12.1
+      - postgrest==1.1.1
+      - supabase_auth==2.12.3
+      - supabase_functions==0.10.1
+      - realtime==2.7.0
+      - jiter==0.11.0
+
+      # Autenticación/JWT para validación de tokens (auth.py)
+      - python-jose[cryptography]
+
+      # Notificaciones (Settings/Notifications)
+      - twilio
+
+      # Validadores y utilidades que ya aparecían en tu reqs
+      - email-validator
+      - StrEnum==0.4.15
+      - typing-inspection
+
+      # (Opcional) PyJWT estaba en tu reqs, pero no es requerido si usas python-jose
+      # - PyJWT==2.10.1

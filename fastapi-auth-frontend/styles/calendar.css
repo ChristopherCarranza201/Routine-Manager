@@ -1,0 +1,692 @@
+:root {
+  --rm-border: #e5e7eb;
+  --rm-muted: #6b7280;
+  --rm-soft: #f8f9fb;
+  --rm-focus: #2563eb;
+  --rm-radius: 8px;
+
+  /* Ancho fijo de columna de día (puedes ajustarlo) */
+  --day-col: 220px;
+
+  /* Paleta del resaltado (naranja) */
+  --rm-hour-border: #ff95007b;
+  --rm-hour-bg: rgba(249, 115, 22, .12);
+  --rm-hour-text: #67656569;
+
+  /* Línea “ahora” */
+  --rm-now-line: #ff9500;
+}
+
+/* ===== RBC base ===== */
+.rbc-calendar {
+  background: transparent;
+  color: #111827;
+}
+
+.calendar-container {
+  position: relative;
+  /* <-- para posicionar popovers dentro */
+  min-height: 520px;
+  width: 100%;
+}
+
+/* ===== Vista tiempo (marco) ===== */
+.rbc-time-view {
+  border: 1px solid var(--rm-border);
+  border-radius: var(--rm-radius);
+  background: #fff;
+  overflow: hidden;
+}
+
+/* Solo en vistas de tiempo (Day/Week), ocultar el label nativo de RBC */
+.rbc-time-view .rbc-event .rbc-event-label {
+  display: none !important;
+}
+
+/* Oculta la scrollbar horizontal del header (WebKit) */
+.rbc-time-header-content.rm-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+
+.rm-event-desc {
+  font-weight: 400;
+  line-height: 1.15;
+  opacity: .9;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+/* ===== Header ===== */
+.rbc-time-header {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  background: #fff;
+  border-bottom: 0;
+}
+
+.rbc-header {
+  padding: 10px 0;
+  font-weight: 600;
+  color: #111827;
+  background: #fff;
+  border-left: 1px solid var(--rm-border) !important;
+}
+
+.rbc-time-header .rbc-header+.rbc-header {
+  border-left: 1px solid var(--rm-border) !important;
+}
+
+.rbc-time-header .rbc-allday-cell {
+  display: none;
+}
+
+
+/* Header de días alineado al mismo ancho fijo */
+.rm-fixed-cols .rbc-time-view .rbc-time-header .rbc-header {
+  flex: 0 0 var(--day-col) !important;
+  width: var(--day-col) !important;
+  max-width: var(--day-col) !important;
+}
+
+/* Contenedor del header: permitir scroll interno (que espejamos) pero sin “parallax” */
+.rbc-time-header-content {
+  overflow-x: auto !important;
+  /* el JS la pondrá a 'auto' con !important */
+  overflow: hidden;
+  will-change: auto;
+  /* ← no necesitamos forzar GPU */
+  transform: none;
+  /* ← sin transform para evitar lag */
+  scrollbar-width: none;
+
+}
+
+/* La fila de días no necesita transform; el desplazamiento lo haremos con scrollLeft */
+.rbc-time-header-content .rbc-row {
+  will-change: auto;
+  transform: none !important;
+}
+
+/* Day debe ocupar todo el ancho útil del body */
+.calendar-container.rm-day .rbc-time-content {
+  overflow-x: hidden;
+  /* sin scroll horizontal en Day */
+}
+
+.calendar-container.rm-day .rbc-time-header-content {
+  overflow: hidden;
+  /* alinea con body */
+}
+
+
+/* ===== Gutter fijo ===== */
+.rbc-time-gutter,
+.rbc-time-header-gutter {
+  position: sticky;
+  left: 0;
+  z-index: 60;
+  background: #fff;
+  border-right: 1px solid var(--rm-border);
+  width: 80px !important;
+  min-width: 80px !important;
+  max-width: 80px !important;
+  flex: 0 0 80px !important;
+}
+
+/* ===== Grilla ===== */
+.rbc-timeslot-group {
+  min-height: 180px;
+  border-top: 0;
+}
+
+.rbc-timeslot-group .rbc-time-slot:first-child {
+  border-top: 2px solid #d1d7df !important;
+}
+
+.rbc-time-slot {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  background: #fff !important;
+}
+
+.rbc-time-content {
+  border-left: 0 !important;
+  background: #fff;
+  position: relative;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding-bottom: 0 !important;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: contain;
+
+}
+
+.rbc-time-content .rbc-time-column+.rbc-time-column {
+  box-shadow: inset 1px 0 0 var(--rm-border) !important;
+}
+
+/* (SOLO cuando el contenedor tenga .rm-fixed-cols) */
+.rm-fixed-cols .rbc-time-view .rbc-time-content .rbc-time-column:not(.rbc-time-gutter) {
+  flex: 0 0 var(--day-col) !important;
+  width: var(--day-col) !important;
+  max-width: var(--day-col) !important;
+}
+
+
+.rbc-day-view .rbc-time-content {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.rbc-time-content .rbc-day-slot .rbc-current-time-indicator {
+  display: none !important;
+  opacity: 0 !important;
+  overflow: hidden;
+}
+
+/* Oculta el ÚLTIMO grid de cada columna de día */
+.rbc-time-content .rbc-day-slot.rbc-time-column .rbc-timeslot-group:last-child {
+  display: none;
+}
+
+/* Si quedara algún margen del último hijo dentro de la columna, elimínalo */
+.rbc-time-content .rbc-day-slot>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+
+/* habilita stacking context para los labels del gutter */
+.rbc-time-gutter .rbc-label {
+  position: relative;
+  z-index: 20;
+}
+
+.rbc-events-container {
+  background: transparent !important;
+}
+
+/* ===== Hoy ===== */
+.rbc-today {
+  background: #60c6cf1a;
+}
+
+.rbc-current-time-indicator {
+  display: none !important;
+  width: 0;
+}
+
+/* usamos la custom */
+
+/* ===== Etiquetas del gutter ===== */
+.rbc-time-gutter .rbc-timeslot-group {
+  position: relative;
+}
+
+.rbc-time-gutter .rbc-timeslot-group .rbc-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--rm-muted);
+  font-size: 12px;
+}
+
+.rm-gutter-enhanced .rbc-time-gutter .rbc-label {
+  display: none;
+}
+
+.rm-sub-label {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--rm-muted);
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ===== Selector por SLOT ===== */
+.rbc-time-gutter .rbc-time-slot {
+  position: relative;
+}
+
+.rbc-time-gutter .rbc-time-slot.rm-slot-active::before {
+  content: "";
+  position: absolute;
+  inset: 6px 8px;
+  border-radius: 12px;
+  border: 2px solid var(--rm-hour-border);
+  background: var(--rm-hour-bg);
+  box-shadow: 0 2px 6px rgba(17, 24, 39, .08);
+}
+
+/* ===== Evento RBC enriquecido (clase de wrapper) ===== */
+/* separa las columnas de días */
+.rbc-time-content .rbc-time-column:not(.rbc-time-gutter) {
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* el gutter se queda “limpio” para que las horas se vean centradas */
+.rbc-time-gutter {
+  padding: 0 !important;
+}
+
+/* tarjeta del evento */
+.rbc-time-view .rbc-event {
+  padding: 0 !important;
+}
+
+.rbc-time-view .rbc-event-content {
+  padding: 0 !important;
+}
+
+.rm-event {
+  border: 3px solid var(--ev, #60A5FA) !important;
+  border-radius: 12px !important;
+  background: var(--ev-soft, rgba(96, 165, 250, .18)) !important;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(17, 24, 39, .08);
+  font-size: 14px;
+}
+
+/* Contenedor interno: deja espacio arriba para el header */
+.rm-event-card {
+  position: relative;
+  padding: 48px 10px 0;
+  /* 48px = altura de header */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* ↑ separa título y descripción */
+}
+
+/* Header propio pegado al borde superior, ocupa todo el ancho del evento */
+.rm-event-head {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 6px 10px;
+  min-height: 24px;
+  display: block;
+  background: var(--ev, #60A5FA);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Título con wrap (no se corta) */
+.rm-event-title.rm-wrap {
+  white-space: normal;
+  word-break: break-word;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Separación vertical entre eventos apilados */
+.rbc-day-slot .rbc-event {
+  margin: 5px;
+  z-index: 5;
+}
+
+/* pie opcional (avatars, +1, etc.) */
+.rm-event-footer {
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===== Portal interno del widget ===== */
+.rm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  z-index: 29;
+}
+
+.rm-popover {
+  position: absolute;
+  z-index: 30;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+}
+
+/* ——— Agenda: SOLO el body ——— */
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-table {
+  border-collapse: separate !important;
+  border-spacing: 0 10px !important;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-date-cell {
+  display: table-cell !important;
+  width: 8.5rem;
+  min-width: 8.5rem;
+  white-space: nowrap;
+  background: transparent !important;
+  border: 0 !important;
+  vertical-align: top !important;
+  position: relative;
+  z-index: 0;
+}
+
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-time-cell {
+  width: 9.5rem;
+  min-width: 9.5rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-table td,
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-table th {
+  border: none !important;
+  background: transparent !important;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-event-cell {
+  position: relative;
+  z-index: 1;
+}
+
+.rbc-agenda-view .rbc-agenda-content .rbc-agenda-event-cell .rm-event {
+  width: 100%;
+  margin: 0 !important;
+  border-width: 2px !important;
+  box-shadow: 0 1px 3px rgba(17, 24, 39, .08);
+}
+
+/* ======== NUEVO: estilos para “hora próxima” ======== */
+/* Nativas */
+.rbc-time-gutter .rbc-timeslot-group .rbc-label.rm-next-hour {
+  color: var(--rm-now-line) !important;
+  /* naranja */
+  font-weight: 700;
+}
+
+/* Sub-labels (rm-gutter-enhanced) */
+.rbc-time-gutter .rm-sub-label.rm-next-hour {
+  color: var(--rm-now-line) !important;
+  /* naranja */
+  font-weight: 700;
+  z-index: 2;
+}
+
+/* ====== Popover estilo Asana-like (NUEVO) ====== */
+/* >>> POP: estilos de popout */
+.rm-pop-card {
+  width: 360px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, .08);
+  overflow: hidden;
+}
+
+.rm-pop-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+
+.rm-date-badge {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #ff0011;
+  border: 1px solid #fecaca;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, .02);
+  text-align: center;
+  padding-top: 2px;
+}
+
+.rm-date-badge .m {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.rm-date-badge .d {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.rm-pop-title .t {
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.rm-pop-title .sub {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.rm-ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, .08);
+  background: #fff;
+  color: #111827;
+}
+
+.rm-ghost-btn:hover {
+  background: #f8fafc;
+}
+
+.rm-divider {
+  height: 1px;
+  background: rgba(15, 23, 42, .08);
+}
+
+.rm-pop-section {
+  padding: 12px 14px;
+}
+
+.rm-pop-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.rm-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, .12);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+}
+
+.rm-chip img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.rm-chip span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.rm-chip em {
+  font-style: normal;
+  font-size: 12px;
+  color: #111827;
+}
+
+.rm-dots {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.rm-dot {
+  --dot: #60A5FA;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--dot);
+
+}
+
+.rm-dot.is-active {
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .08);
+  width: 22px;
+  height: 22px;
+}
+
+.rm-dot:hover {
+  transform: scale(1.06);
+}
+
+.rm-notes {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, .12);
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.rm-pop-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  padding: 12px 14px 14px;
+}
+
+.rm-secondary,
+.rm-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 36px;
+  padding: 0 35px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+
+.rm-secondary {
+  background: #fff;
+  border-color: rgb(160, 164, 174);
+}
+
+.rm-secondary:hover {
+  background: #f8fafc;
+}
+
+.rm-danger {
+  background: #000000;
+  color: #ffffff;
+  border-color: #807676;
+}
+
+.rm-danger:hover {
+  background: #ff1919;
+}
+
+/* posicionamiento del popover dentro del widget (ya existían helpers) */
+.rm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  z-index: 29;
+}
+
+.rm-popover {
+  position: absolute;
+  z-index: 30;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .15));
+}
+
+/* <<< POP */
+
+
+/* ===== Responsive ===== */
+@media (max-width:1024px) {
+  .rbc-timeslot-group {
+    border-top: 0 !important;
+    box-shadow: inset 0 .5px 0 rgba(0, 0, 0, .08);
+  }
+
+  .rbc-header {
+    padding: 6px 0;
+  }
+}
+
+@media (max-width:640px) {
+
+  .rbc-time-gutter,
+  .rbc-time-header-gutter {
+    display: none !important;
+  }
+
+  .rbc-timeslot-group {
+    min-height: 72px !important;
+  }
+
+  .rbc-header {
+    padding: 8px 0;
+    font-size: 14px;
+  }
+}
