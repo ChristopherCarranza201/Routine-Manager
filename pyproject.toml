@@ -1,0 +1,24 @@
+[project]
+name = "routine-manager"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "email-validator>=2.3.0",
+    "fastapi>=0.124.2",
+    "jiter==0.11.0",
+    "openai==1.107.3",
+    "postgrest==1.1.1",
+    "python-jose[cryptography]>=3.5.0",
+    "python-multipart>=0.0.20",
+    "realtime==2.7.0",
+    "storage3==0.12.1",
+    "strenum==0.4.15",
+    "supabase==2.18.1",
+    "supabase-auth==2.12.3",
+    "supabase-functions==0.10.1",
+    "twilio>=9.8.8",
+    "typing-inspection>=0.4.2",
+    "uvicorn[standard]>=0.38.0",
+]

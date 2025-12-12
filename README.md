@@ -1,7 +1,13 @@
-# 🔐 Agente de Autenticación con Supabase y OpenAI
+# 📘 Routine Manager
 
-Aplicación de autenticación que combina un **backend robusto en FastAPI** con un **frontend dinámico en Next.js**.  
-Su característica principal es la integración de un **agente de detección de anomalías con OpenAI** para mejorar la seguridad en el inicio de sesión.
+Routine Manager es una aplicación web diseñada para la **gestión
+estructurada de tareas y rutinas**, con un **backend en FastAPI**, un
+**frontend en Next.js construido mediante V0**, y una infraestructura de
+datos apoyada en **Supabase**.\
+El sistema permite la creación, actualización, gestión dinámica de
+fechas, y notificaciones automatizadas para tareas próximas mediante un
+webhook conectado al **WhatsApp Cloud API (Meta)**.
+
 
 ---
 
@@ -14,33 +20,37 @@ Su característica principal es la integración de un **agente de detección de 
 
 ---
 
-## 📌 Puntos Clave del Proyecto
+## 🧩 Módulo Previo: Autenticación con Supabase y Detección de Anomalías con OpenAI
 
-### 🔑 Autenticación Segura
+Este módulo fue parte de la primera fase del proyecto. Incluía:
+
+### 1. 🔑 Autenticación Segura
 Flujos completos de registro, inicio de sesión y recuperación de contraseña.
 
-### 🕵️‍♂️ Detección de Anomalías
+### 2. 🕵️‍♂️ Detección de Anomalías
 El agente analiza cada inicio de sesión considerando:
 - Historial del usuario
 - Ubicación
 - Comportamientos inusuales (ej. accesos desde ubicaciones desconocidas)
 
-### 🧩 Arquitectura Modular
-Separación en **backend API** y **frontend** para facilitar escalabilidad y mantenimiento.
-
-### 🔄 Restablecimiento de Contraseña
+### 3. 🔄 Restablecimiento de Contraseña
 Flujo seguro mediante **correo electrónico transaccional**.
 
----
+**Aunque este módulo permanece dentro del repositorio, actualmente no
+forma parte del alcance principal del Routine Manager**, ya que el foco
+está en el gestor de tareas y sistema de notificaciones.
+
+------------------------------------------------------------------------
+
 
 ## 🗄️ Relación con Supabase
 
 | Función                  | Descripción                                                                 |
 |---------------------------|-----------------------------------------------------------------------------|
 | 👤 Gestión de Usuarios    | Creación de cuentas, almacenamiento seguro de contraseñas, emisión de tokens |
-| 🗂️ Base de Datos          | Registro de historial de inicios de sesión para detección de anomalías        |
+| 🗂️ Base de Datos          | Registro de historial de inicios de sesión para detección de anomalías, creación, actualización y eliminación de rutinas        |
 | ✉️ Correos Automáticos    | Confirmación de registro y restablecimiento de contraseña                     |
-
+| Sincronización de estados | Cambios visuales de la UI reflejan modificaciones en Supabase (fechas / horas)
 ---
 
 ## ⚙️ Tutorial de Configuración y Pruebas
@@ -85,16 +95,39 @@ DELETE FROM public.login_history WHERE user_id = 'el_id_de_tu_usuario';
 
 > 💡 **Notas Importantes**
 > - El backend y el frontend deben iniciarse **por separado**.  
-> - Asegúrate de que tu archivo `.env` esté correctamente configurado antes de ejecutar.  
-> - Si modificas dependencias, reinstálalas con `pip install -r requirements.txt` o `npm install`.  
+> - Asegúrate de que tu archivo `.env` esté correctamente configurado antes de ejecutar.
+> - Instalación previa de UV. DOCS: https://docs.astral.sh/uv/getting-started/installation/#standalone-installer
 
-### 🟢 Iniciar el Backend (FastAPI)
+### 🟢 Backend (FastAPI) con **UV**
 
-```bash
-cd fastapi-auth-backend/
-pip install -r requirements.txt
+### 1. Instalar UV
+
+Windows:
+
+``` powershell
+irm https://astral.sh/uv/install.ps1 | iex
+```
+Linux / macOS:
+
+``` bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### 2. Crear entorno e instalar dependencias
+
+``` bash
+cd backend/
+uv venv
+source .venv/bin/activate    # Linux/macOS
+.venv\Scripts\activate     # Windows
+```
+
+### 3. Ejecutar backend FastAPI
+
+``` bash
 uvicorn main:app --reload
 ```
+
 
 👉 Disponible en: `http://localhost:8000`
 
